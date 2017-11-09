@@ -1,0 +1,23 @@
+{
+  "name": "nodetrade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Onefivefournine@bitbucket.org/Onefivefournine/nodetrade.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/Onefivefournine/nodetrade#readme",
+  "dependencies": {
+    "axios": "^0.17.0",
+    "moment": "^2.19.1",
+    "mysql": "^2.15.0",
+    "talib": "^1.0.3"
+  }
+}

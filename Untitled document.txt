@@ -1,0 +1,29 @@
+To​ ​be​ ​completed​ ​only​ ​in​ ​javascript/node​ ​js​ ​from​ ​a​ ​terminal
+To​ ​be​ ​completed​ ​with​ ​TA-LIB,​ ​i​ ​will​ ​gladly​ ​help​ ​you​ ​with​ ​any​ ​questions​ ​you​ ​have​ ​with​ ​talib
+*talib​ ​can​ ​be​ ​a​ ​rocky​ ​road,​ ​we​ ​will​ ​probably​ ​have​ ​to​ ​work​ ​on​ ​this​ ​part​ ​together*
+
+1. If​ ​historicals​ ​are​ ​missing(grab​ ​x​ ​amount​ ​of​ ​days)(21​ ​default)
+2. Grab​ ​historicals​ ​from​ ​poloniex​ ​api​ ​(returnChartData​ ​endpoint)
+	a. Insert​ ​all​ ​this​ ​data​ ​into​ ​single​ ​table​ ​database
+3. Select​ ​a​ ​coin(this​ ​will​ ​be​ ​input:​ ​example​ ​BTC_XMR)
+4. Main​ ​loop
+	a. If​ ​no​ ​coin​ ​is​ ​being​ ​tracked
+		i.Custom​ ​code​ ​function​ ​header​ ​for​ ​pre​ ​buy
+			1. Run​ ​talib.bbands​ ​against​ ​histories​ ​from​ ​database​ ​for​ ​current coin(do​ ​this​ ​for​ ​last​ ​21​ ​days)
+			2. Run​ ​talib.rsi​ ​against​ ​histories​ ​from​ ​database​ ​for​ ​current​ ​coin
+				a. Use​ ​last​ ​14​ ​days
+			3. If(bbands.lowerBand[bbands.lowerBand.length​ ​-1]​ ​<​ ​lastPrice​ ​and rsi[rsi.length​ ​-1]​ ​<​ ​20)
+			4. If​ ​multiple​ ​cases​ ​of​ ​this,​ ​then​ ​rank​ ​them​ ​all​ ​with​ ​the​ ​rsi
+				a. The​ ​one​ ​with​ ​the​ ​lowest​ ​rsi​ ​get​ ​the​ ​buy
+				b. Buy​ ​the​ ​altcoin,​ ​save​ ​the​ ​price
+	b. else
+		i.Custom​ ​code​ ​function​ ​header​ ​for​ ​holding​ ​position
+			1. Implement​ ​a​ ​stop​ ​loss​ ​of​ ​3​ ​percent​ ​of​ ​investment(invest​ ​amount​ ​is a​ ​variable​ ​that​ ​is​ ​an​ ​input)
+			2. Run​ ​talib.bbands​ ​against​ ​current​ ​coin’s​ ​history​ ​that​ ​has​ ​just​ ​been bought(​ ​do​ ​this​ ​for​ ​last​ ​21​ ​days)
+			3. Run​ ​talib.rsi​ ​against​ ​current​ ​coin’s​ ​history​ ​that​ ​has​ ​just​ ​been bought
+			4. If​ ​lastPrice​ ​>​ ​bbands.upperBand[bbands.length​ ​-​ ​1]
+				a. Sell
+					i.Save​ ​the​ ​profit​ ​amount​ ​by​ ​:
+						1. Subtracting​ ​sell​ ​price​ ​from​ ​sale​ ​price
+						2. Add​ ​this​ ​difference​ ​to​ ​a​ ​total​ ​profit
+	c. Exit​ ​if​ ​all​ ​of​ ​hist​ ​has​ ​been​ ​gone​ ​through
