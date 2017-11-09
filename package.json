@@ -17,7 +17,8 @@
   "dependencies": {
     "axios": "^0.17.0",
     "moment": "^2.19.1",
-    "mysql": "^2.15.0",
+    "mysql2": "^1.4.2",
+    "sequelize": "^4.22.5",
     "talib": "^1.0.3"
   }
 }
