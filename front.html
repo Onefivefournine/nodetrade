@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div>
+    <canvas id="myChart"
+      width="300"
+      height="300"></canvas>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script src="datastamps/dates.js"></script>
+  <script src="datastamps/lBand.js"></script>
+  <script src="datastamps/mBand.js"></script>
+  <script src="datastamps/uBand.js"></script>
+  <script src="datastamps/prices.js"></script>
+  <script>
+  Chart.defaults.global.elements.point.radius = 0
+  var ctx = document.getElementById("myChart");
+  var myChart = new Chart(ctx, {
+    width: 300,
+    height: 300,
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+          label: 'prices',
+          data: prices,
+          borderColor: '#00dd00',
+          fill: false
+        }, {
+          label: 'lowerBand',
+          data: lowerBand,
+          borderColor: '#36a2eb',
+          fill: false
+        },
+        {
+          label: 'middleBand',
+          data: middleBand,
+          borderColor: '#ff6384',
+          fill: false
+        },
+        {
+          label: 'upperBand',
+          data: upperBand,
+          borderColor: '#cc65fe',
+          fill: false
+        }]
+    },
+    options: {
+      layout: {
+        padding: {
+          left: 20,
+          right: 20,
+          top: 700,
+          bottom: 700
+        }
+      }
+    }
+  });
+
+  </script>
+</body>
+
+</html>

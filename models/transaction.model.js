@@ -1,13 +1,14 @@
 const Sequelize = require('sequelize');
+const moment = require('moment');
 
-const chartData = (sequelizeInstance) => sequelizeInstance.define('chart_data', {
+const transaction = (sequelizeInstance) => sequelizeInstance.define('transaction', {
   id: { type: Sequelize.CHAR, defaultValue: Sequelize.UUIDV4, primaryKey: true },
-  createdAt: Sequelize.DATE,
+  createdAt: { type: Sequelize.DATE, defaultValue: moment() },
   amount: Sequelize.FLOAT,
+  type: Sequelize.STRING,
   currency: Sequelize.STRING,
-
 }, {
   timestamps: false
 });
 
-module.exports = chartData;
+module.exports = transaction;

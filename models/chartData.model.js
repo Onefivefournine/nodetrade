@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const moment = require('moment');
 
 const chartData = (sequelizeInstance) => sequelizeInstance.define('chart_data', {
   id: { type: Sequelize.CHAR, defaultValue: Sequelize.UUIDV4, primaryKey: true },
@@ -11,7 +12,7 @@ const chartData = (sequelizeInstance) => sequelizeInstance.define('chart_data', 
   quoteVolume: Sequelize.FLOAT,
   weightedAverage: Sequelize.FLOAT,
   coinPair: Sequelize.STRING,
-  createdAt: Sequelize.DATE,
+  createdAt: { type: Sequelize.DATE, defaultValue: moment() },
   period: Sequelize.INTEGER
 }, {
   timestamps: false
