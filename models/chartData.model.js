@@ -12,7 +12,7 @@ const chartData = (sequelizeInstance) => sequelizeInstance.define('chart_data', 
   quoteVolume: Sequelize.FLOAT,
   weightedAverage: Sequelize.FLOAT,
   coinPair: Sequelize.STRING,
-  createdAt: { type: Sequelize.DATE, defaultValue: moment() },
+  createdAt: { type: Sequelize.DATE, defaultValue: moment().toDate() },
   period: Sequelize.INTEGER
 }, {
   timestamps: false

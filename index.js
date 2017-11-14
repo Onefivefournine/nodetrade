@@ -3,20 +3,21 @@ const axios = require('axios');
 const talib = require('talib');
 const moment = require('moment');
 
-const CURRENCY_PAIR = 'BTC_ETH';
+const CURRENCY_PAIR = 'BTC_XMR';
 const INVEST_QUANTITY = 0.01;
 
-const START = 1508250645 //moment().subtract(21, 'days').unix();
+const START = moment().subtract(21, 'days').unix();
 const END = 9999999999 // moment().unix();
-// 300, 900, 1800, 7200, 14400, or 86400
-const PERIOD = 900;
+const PERIOD = 900; // 300, 900, 1800, 7200, 14400, or 86400
+const RSI_TRESHOLD = 30;
 
 const DATA_URL = `https://poloniex.com/public?command=returnChartData&currencyPair=${CURRENCY_PAIR}&start=${START}&end=${END}&period=${PERIOD}`;
 const DB_URL = 'mysql://root:123@localhost:3306/testdb';
 
-const sequelize = new Sequelize(DB_URL);
-const chartData = require('./models/chartData.model')(sequelize);
-const transaction = require('./models/transaction.model')(sequelize);
+const sequelizeInstance = new Sequelize(DB_URL, { logging: false });
+const chartData = require('./models/chartData.model')(sequelizeInstance);
+const transaction = require('./models/transaction.model')(sequelizeInstance);
+const bbands = require('./models/bbands.model')(sequelizeInstance);
 
 function getBBands(data) {
   return new Promise((resolve, reject) => {
@@ -30,16 +31,8 @@ function getBBands(data) {
       optInNbDevDn: 2,
       optInMAType: 0
     }, function(err, calculations) {
-
-      console.log('BBANDS', calculations);
       if (err) reject(err);
       resolve(calculations.result)
-      // bbands.create({
-      //   prices: JSON.stringify(data.map(el => el.close)),
-      //   upperBand: JSON.stringify(res.result.outRealUpperBand),
-      //   lowerBand: JSON.stringify(res.result.outRealLowerBand),
-      //   middleBand: JSON.stringify(res.result.outRealMiddleBand),
-      // })
     })
   })
 }
@@ -52,48 +45,80 @@ function getRsi(data) {
       endIdx: data.length - 1,
       inReal: data.map(el => el.close),
       optInTimePeriod: 14,
-
     }, function(err, calculations) {
-      console.log('RSI', calculations);
       if (err) reject(err);
       resolve(calculations.result)
-      // bbands.create({
-      //   prices: JSON.stringify(data.map(el => el.close)),
-      //   upperBand: JSON.stringify(res.result.outRealUpperBand),
-      //   lowerBand: JSON.stringify(res.result.outRealLowerBand),
-      //   middleBand: JSON.stringify(res.result.outRealMiddleBand),
-      // })
     })
   })
 }
 
-function calculate(BBands, rsi, rawData) {
-  let lowerBand = BBands.outRealLowerBand;
-  const getLast = arr => arr[arr.length - 1];
+let rawData,
+  hasBuy = false,
+  profit = 0;
 
-  if (
-    (getLast(lowerBand) > getLast(rawData).close) &&
-    (getLast(rsi) < 20)
-  ) {
-    transaction.create({
-      amount: INVEST_QUANTITY,
-      currency: CURRENCY_PAIR,
-      type: 'sell'
-    });
-  } else if (getLast(rawData).close > getLast(lowerBand)) {
-    transaction.create({
-      amount: INVEST_QUANTITY,
-      currency: CURRENCY_PAIR,
-      type: 'buy'
-    });
+function calculate(buffer) {
+  if (buffer.length) {
+    let lowerBand;
+    return getBBands(buffer)
+      .then((bbands) => {
+        lowerBand = bbands.outRealLowerBand;
+        return getRsi(buffer);
+      })
+      .then((rsi) => {
+        let lastLowerBand = lowerBand[lowerBand.length - 1],
+          lastRsi = rsi.outReal[rsi.outReal.length - 1],
+          lastBuffer = buffer[buffer.length - 1];
+
+        console.log(lastLowerBand, lastRsi, lastBuffer.close);
+
+        if (
+          lastLowerBand && lastRsi && lastBuffer.close &&
+          (lastBuffer.close < lastLowerBand) &&
+          (lastRsi < RSI_TRESHOLD) &&
+          hasBuy
+        ) {
+          let diff = lastBuffer.close * INVEST_QUANTITY - buyPrice;
+          profit = diff;
+          transaction.create({
+            price: lastBuffer.close,
+            investQuantity: INVEST_QUANTITY,
+            currency: CURRENCY_PAIR,
+            profit,
+            type: 'sell'
+          });
+          console.log('SELL');
+          console.log('Profit from current: ' + diff);
+          console.log('Overall profit: ' + profit);
+          hasBuy = false
+        } else if (lastLowerBand && lastRsi && lastBuffer.close &&
+          lastBuffer.close > lastLowerBand && !hasBuy) {
+          buyPrice = lastBuffer.close * INVEST_QUANTITY;
+          profit -= buyPrice;
+
+          transaction.create({
+            price: lastBuffer.close,
+            investQuantity: INVEST_QUANTITY,
+            currency: CURRENCY_PAIR,
+            profit,
+            type: 'buy'
+          });
+          console.log('BUY');
+          console.log('Overall profit: ' + profit);
+          hasBuy = true
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+      });
+  } else {
+    return Promise.reject('NO BUFFER LENGTH')
   }
 }
 
-let BBands, rsi, rawData;
-
 Promise.all([
-chartData.sync({ force: true }),
-transaction.sync()
+    chartData.sync({ force: true }),
+    transaction.sync(),
+    bbands.sync({ force: true })
   ])
   .then(() => axios.get(DATA_URL))
   .then((res) => {
@@ -104,16 +129,25 @@ transaction.sync()
       el.createdAt = Date.now()
       return el
     });
+    chartData.bulkCreate(rawData)
     return rawData;
   })
-  .then((data) => getBBands(data))
   .then((result) => {
-    BBands = result;
-    return getRsi(rawData)
+    return rawData.reverse().reduce((sum, item, i) => {
+      return sum.then(() => {
+          return calculate(rawData)
+        })
+        .then(() => {
+          rawData.pop();
+          // console.log(rawData.length);
+        })
+    }, Promise.resolve());
   })
-  .then((result) => {
-    rsi = result.outReal;
-    calculate(BBands, rsi, rawData);
-    return chartData.bulkCreate(rawData)
+  .then(() => {
+    console.log('End profit is: ' + profit);
+    process.exit(0)
   })
-  .catch((err) => console.error(err))
+  .catch((err) => {
+    console.error(err)
+    process.exit(0)
+  })
