@@ -6,66 +6,167 @@
   <title>Document</title>
   <meta name="viewport"
     content="width=device-width, initial-scale=1">
+  <style>
+  .container {
+    width: 100%;
+    height: 800px
+  }
+
+  .table {
+    width: 100%;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .table tbody tr:nth-child(2n+1) {
+    background-color: #eee;
+  }
+
+  .table td,
+  .table th {
+    border: none;
+    padding: 5px;
+  }
+
+  .table thead tr {
+    background-color: #555;
+    color: #fff;
+  }
+
+  </style>
 </head>
 
 <body>
-  <div>
-    <canvas id="myChart"
-      width="300"
-      height="300"></canvas>
+  <div class="container">
+    <canvas id="myChart"></canvas>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-  <script src="datastamps/dates.js"></script>
-  <script src="datastamps/lBand.js"></script>
-  <script src="datastamps/mBand.js"></script>
-  <script src="datastamps/uBand.js"></script>
-  <script src="datastamps/prices.js"></script>
-  <script>
-  Chart.defaults.global.elements.point.radius = 0
-  var ctx = document.getElementById("myChart");
-  var myChart = new Chart(ctx, {
-    width: 300,
-    height: 300,
-    type: 'line',
-    data: {
-      labels: dates,
-      datasets: [{
-          label: 'prices',
-          data: prices,
-          borderColor: '#00dd00',
-          fill: false
-        }, {
-          label: 'lowerBand',
-          data: lowerBand,
-          borderColor: '#36a2eb',
-          fill: false
-        },
-        {
-          label: 'middleBand',
-          data: middleBand,
-          borderColor: '#ff6384',
-          fill: false
-        },
-        {
-          label: 'upperBand',
-          data: upperBand,
-          borderColor: '#cc65fe',
-          fill: false
-        }]
-    },
-    options: {
-      layout: {
-        padding: {
-          left: 20,
-          right: 20,
-          top: 700,
-          bottom: 700
+  <br>
+  <table id="rawdata"
+    class="table"
+    cellspacing="0"></table>
+  <button id="prev">
+    < </button>
+      <button id="next">
+        >
+      </button>
+      <select id="limit">
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="300">300</option>
+      </select>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+      <script>
+      $(document).ready(function() {
+        function getData(url) {
+          return new Promise((resolve, reject) => {
+            $.ajax({
+              method: 'GET',
+              url,
+              success: resolve,
+              error: reject
+            })
+          })
         }
-      }
-    }
-  });
 
-  </script>
+        let tbody = $('<tbody/>');
+        let thead = $('<thead/>');
+        thead.append($('<tr/>').html(`<th>Date</th><th>High</th><th>Low</th><th>Open</th><th>Close</th><th>Volume</th><th>Quote volume</th><th>Weighted average</th>`));
+        $('table#rawdata').append(thead).append(tbody);
+
+        function generateTable(data) {
+          let tbody = $('tbody', $('table#rawdata'))
+          tbody.html('')
+          data.forEach((item) => {
+            let row = $('<tr/>').html(`<td>${item.date}</td><td>${item.high}</td><td>${item.low}</td><td>${item.open}</td><td>${item.close}</td><td>${item.volume}</td><td>${item.quoteVolume}</td><td>${item.weightedAverage}</td>`);
+            tbody.append(row)
+          });
+        }
+
+        function getBBands(paramString) {
+          if (!paramString) paramString = ''
+          getData('http://localhost:8888/raw-data' + paramString)
+            .then((res) => {
+              generateTable(res)
+            })
+            .catch(err => { console.error(err) })
+        }
+        let params = {
+          offset: 0,
+          limit: 15
+        };
+
+        function next() {
+          params.offset = params.offset + 15;
+          getBBands(`?offset=${params.offset}&limit=${params.limit}`)
+        }
+
+        function prev() {
+          params.offset = params.offset > 15 ? params.offset - 15 : 0;
+          getBBands(`?offset=${params.offset}&limit=${params.limit}`)
+        }
+        $('#limit').change((ev) => {
+          params.limit = +ev.target.value;
+          params.offset = 0
+          getBBands(`?offset=0&limit=${params.limit}`)
+        })
+        $('#prev').click(prev)
+        $('#next').click(next)
+        getData('http://localhost:8888/bbands')
+          .then((res) => {
+            createChart(res);
+            return getBBands()
+          })
+          .catch(err => { console.error(err) })
+
+        Chart.defaults.global.elements.point.radius = 0
+
+        function createChart(data) {
+          let ctx = document.getElementById("myChart");
+          let myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: data.dates,
+              datasets: [{
+                  label: 'prices',
+                  data: data.prices,
+                  borderColor: '#00dd00',
+                  fill: false
+        }, {
+                  label: 'lowerBand',
+                  data: data.lowerBand,
+                  borderColor: '#36a2eb',
+                  fill: false
+        },
+                {
+                  label: 'middleBand',
+                  data: data.middleBand,
+                  borderColor: '#ff6384',
+                  fill: false
+        },
+                {
+                  label: 'upperBand',
+                  data: data.upperBand,
+                  borderColor: '#cc65fe',
+                  fill: false
+        }]
+            },
+            options: {
+              tooltips: {
+                mode: 'index',
+                intersect: false
+              }
+            }
+
+          });
+        }
+      })
+
+      </script>
 </body>
 
 </html>

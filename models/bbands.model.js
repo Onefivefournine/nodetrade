@@ -1,14 +1,16 @@
 const Sequelize = require('sequelize');
 const moment = require('moment');
 
-const transaction = (sequelizeInstance) => sequelizeInstance.define('transaction', {
+const bbands = (sequelizeInstance) => sequelizeInstance.define('bbands', {
   id: { type: Sequelize.CHAR, defaultValue: Sequelize.UUIDV4, primaryKey: true },
   createdAt: { type: Sequelize.DATE, defaultValue: moment().toDate() },
-  amount: Sequelize.FLOAT,
-  type: Sequelize.STRING,
-  currency: Sequelize.STRING,
+  lowerBand: Sequelize.JSON,
+  upperBand: Sequelize.JSON,
+  middleBand: Sequelize.JSON,
+  prices: Sequelize.JSON,
+  dates: Sequelize.JSON
 }, {
   timestamps: false
 });
 
-module.exports = transaction;
+module.exports = bbands;

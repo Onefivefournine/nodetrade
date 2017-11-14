@@ -14,9 +14,10 @@ const PERIOD = 900;
 const DATA_URL = `https://poloniex.com/public?command=returnChartData&currencyPair=${CURRENCY_PAIR}&start=${START}&end=${END}&period=${PERIOD}`;
 const DB_URL = 'mysql://root:123@localhost:3306/testdb';
 
-const sequelize = new Sequelize(DB_URL);
-const chartData = require('./models/chartData.model')(sequelize);
-const transaction = require('./models/transaction.model')(sequelize);
+const sequelizeInstance = new Sequelize(DB_URL);
+const chartData = require('./models/chartData.model')(sequelizeInstance);
+const transaction = require('./models/transaction.model')(sequelizeInstance);
+const bbands = require('./models/bbands.model')(sequelizeInstance);
 
 function getBBands(data) {
   return new Promise((resolve, reject) => {
@@ -34,12 +35,13 @@ function getBBands(data) {
       console.log('BBANDS', calculations);
       if (err) reject(err);
       resolve(calculations.result)
-      // bbands.create({
-      //   prices: JSON.stringify(data.map(el => el.close)),
-      //   upperBand: JSON.stringify(res.result.outRealUpperBand),
-      //   lowerBand: JSON.stringify(res.result.outRealLowerBand),
-      //   middleBand: JSON.stringify(res.result.outRealMiddleBand),
-      // })
+      bbands.create({
+        prices: data.map(el => el.close),
+        upperBand: calculations.result.outRealUpperBand,
+        lowerBand: calculations.result.outRealLowerBand,
+        middleBand: calculations.result.outRealMiddleBand,
+        dates: data.map(el => el.date)
+      })
     })
   })
 }
@@ -93,7 +95,8 @@ let BBands, rsi, rawData;
 
 Promise.all([
 chartData.sync({ force: true }),
-transaction.sync()
+transaction.sync(),
+bbands.sync()
   ])
   .then(() => axios.get(DATA_URL))
   .then((res) => {
@@ -116,4 +119,10 @@ transaction.sync()
     calculate(BBands, rsi, rawData);
     return chartData.bulkCreate(rawData)
   })
-  .catch((err) => console.error(err))
+  .then(() => {
+    process.exit(0)
+  })
+  .catch((err) => {
+    console.error(err)
+    process.exit(0)
+  })
