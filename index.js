@@ -31,8 +31,6 @@ function getBBands(data) {
       optInNbDevDn: 2,
       optInMAType: 0
     }, function(err, calculations) {
-
-      console.log('BBANDS', calculations);
       if (err) reject(err);
       resolve(calculations.result)
       bbands.create({
@@ -54,49 +52,64 @@ function getRsi(data) {
       endIdx: data.length - 1,
       inReal: data.map(el => el.close),
       optInTimePeriod: 14,
-
     }, function(err, calculations) {
-      console.log('RSI', calculations);
       if (err) reject(err);
       resolve(calculations.result)
-      // bbands.create({
-      //   prices: JSON.stringify(data.map(el => el.close)),
-      //   upperBand: JSON.stringify(res.result.outRealUpperBand),
-      //   lowerBand: JSON.stringify(res.result.outRealLowerBand),
-      //   middleBand: JSON.stringify(res.result.outRealMiddleBand),
-      // })
     })
   })
 }
 
-function calculate(BBands, rsi, rawData) {
-  let lowerBand = BBands.outRealLowerBand;
-  const getLast = arr => arr[arr.length - 1];
+let rawData, profit = 0;
 
-  if (
-    (getLast(lowerBand) > getLast(rawData).close) &&
-    (getLast(rsi) < 20)
-  ) {
-    transaction.create({
-      amount: INVEST_QUANTITY,
-      currency: CURRENCY_PAIR,
-      type: 'sell'
+function calculate(buffer) {
+  let lowerBand;
+  getBBands(buffer)
+    .then((bbands) => {
+      lowerBand = bbands.outRealLowerBand;
+      return getRsi(buffer);
+    })
+    .then((rsi) => {
+      let lastLowerBand = lowerBand[lowerBand.length - 1],
+        lastRsi = rsi[rsi.length - 1],
+        lastBuffer = buffer[buffer.length - 1];
+
+      if (
+        (lastLowerBand > lastBuffer.close) &&
+        (lastRsi < 20)
+      ) {
+        transaction.create({
+          amount: INVEST_QUANTITY,
+          currency: CURRENCY_PAIR,
+          type: 'sell'
+        });
+        let diff = buyPrice - lastBuffer.close
+        profit += diff;
+        console.log('SELL');
+        console.log('Profit from current: ' + diff);
+        console.log('Overall profit: ' + profit);
+        return false
+      } else
+      if (lastBuffer.close > lastLowerBand) {
+        buyPrice = lastBuffer.close;
+        profit -= buyPrice
+        transaction.create({
+          amount: INVEST_QUANTITY,
+          currency: CURRENCY_PAIR,
+          profit: profit - buyPrice
+          type: 'buy'
+        });
+        console.log('BUY');
+        console.log('Profit remaining: ' + profit - buyPrice);
+        console.log('Overall profit: ' + profit);
+        return true
+      }
     });
-  } else if (getLast(rawData).close > getLast(lowerBand)) {
-    transaction.create({
-      amount: INVEST_QUANTITY,
-      currency: CURRENCY_PAIR,
-      type: 'buy'
-    });
-  }
 }
 
-let BBands, rsi, rawData;
-
 Promise.all([
-chartData.sync({ force: true }),
-transaction.sync(),
-bbands.sync()
+    chartData.sync({ force: true }),
+    transaction.sync(),
+    bbands.sync()
   ])
   .then(() => axios.get(DATA_URL))
   .then((res) => {
@@ -107,6 +120,7 @@ bbands.sync()
       el.createdAt = Date.now()
       return el
     });
+    chartData.bulkCreate(rawData)
     return rawData;
   })
   .then((data) => getBBands(data))
@@ -116,10 +130,12 @@ bbands.sync()
   })
   .then((result) => {
     rsi = result.outReal;
-    calculate(BBands, rsi, rawData);
-    return chartData.bulkCreate(rawData)
-  })
-  .then(() => {
+    let hasBuy = false;
+    rawData.forEach((item, i) => {
+      if (rawData[i - 2] && rawData[i - 1]) {
+        hasBuy = calculate([item, rawData[i - 1], rawData[i - 2]])
+      }
+    });
     process.exit(0)
   })
   .catch((err) => {
