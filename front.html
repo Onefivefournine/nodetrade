@@ -2,170 +2,222 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-    <style>
-    .container {
-        width: 100%;
-        height: 800px
-    }
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1">
+  <style>
+  .table {
+    width: 100%;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+  }
 
-    .table {
-        width: 100%;
-        text-align: center;
-        font-family: Helvetica, Arial, sans-serif;
-    }
+  .table tbody tr:nth-child(2n+1) {
+    background-color: #eee;
+  }
 
-    .table tbody tr:nth-child(2n+1) {
-        background-color: #eee;
-    }
+  .table td,
+  .table th {
+    border: none;
+    padding: 5px;
+  }
 
-    .table td,
-    .table th {
-        border: none;
-        padding: 5px;
-    }
+  .table thead tr {
+    background-color: #555;
+    color: #fff;
+  }
 
-    .table thead tr {
-        background-color: #555;
-        color: #fff;
-    }
-    </style>
+  </style>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.css">
 </head>
 
 <body>
-    <div class="container">
-        <canvas id="myChart"></canvas>
-    </div>
-    <br>
-    <table id="rawdata"
-        class="table"
-        cellspacing="0"></table>
-    <button id="prev">
-        < </button>
-            <button id="next">
-                >
-            </button>
-            <select id="limit">
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="300">300</option>
-            </select>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-            <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-                crossorigin="anonymous"></script>
-            <script>
-            $(document).ready(function() {
-                function getData(url) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            method: 'GET',
-                            url,
-                            success: resolve,
-                            error: reject
-                        })
-                    })
-                }
-
-                let tbody = $('<tbody/>');
-                let thead = $('<thead/>');
-                thead.append($('<tr/>').html(`<th>Date</th><th>High</th><th>Low</th><th>Open</th><th>Close</th><th>Volume</th><th>Quote volume</th><th>Weighted average</th>`));
-                $('table#rawdata').append(thead).append(tbody);
-
-                function generateTable(data) {
-                    let tbody = $('tbody', $('table#rawdata'))
-                    tbody.html('')
-                    data.forEach((item) => {
-                        let row = $('<tr/>').html(`<td>${item.date}</td><td>${item.high}</td><td>${item.low}</td><td>${item.open}</td><td>${item.close}</td><td>${item.volume}</td><td>${item.quoteVolume}</td><td>${item.weightedAverage}</td>`);
-                        tbody.append(row)
-                    });
-                }
-
-                function getBBands(paramString) {
-                    if (!paramString) paramString = ''
-                    getData('http://localhost:8888/raw-data' + paramString)
-                        .then((res) => {
-                            generateTable(res)
-                        })
-                        .catch(err => { console.error(err) })
-                }
-                let params = {
-                    offset: 0,
-                    limit: 15
-                };
-
-                function next() {
-                    params.offset = params.offset + 15;
-                    getBBands(`?offset=${params.offset}&limit=${params.limit}`)
-                }
-
-                function prev() {
-                    params.offset = params.offset > 15 ? params.offset - 15 : 0;
-                    getBBands(`?offset=${params.offset}&limit=${params.limit}`)
-                }
-                $('#limit').change((ev) => {
-                    params.limit = +ev.target.value;
-                    params.offset = 0
-                    getBBands(`?offset=0&limit=${params.limit}`)
-                })
-                $('#prev').click(prev)
-                $('#next').click(next)
-                getData('http://localhost:8888/bbands')
-                    .then((res) => {
-                        createChart(res);
-                        return getBBands()
-                    })
-                    .catch(err => { console.error(err) })
-
-                Chart.defaults.global.elements.point.radius = 0
-
-                function createChart(data) {
-                    let ctx = document.getElementById("myChart");
-                    let myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: data.dates,
-                            datasets: [{
-                                    label: 'prices',
-                                    data: data.prices,
-                                    borderColor: '#00dd00',
-                                    fill: false
-                                }, {
-                                    label: 'lowerBand',
-                                    data: data.lowerBand,
-                                    borderColor: '#36a2eb',
-                                    fill: false
-                                },
-                                {
-                                    label: 'middleBand',
-                                    data: data.middleBand,
-                                    borderColor: '#ff6384',
-                                    fill: false
-                                },
-                                {
-                                    label: 'upperBand',
-                                    data: data.upperBand,
-                                    borderColor: '#cc65fe',
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false
-                            }
-                        }
-
-                    });
-                }
+  <div class="container">
+    <div id="statsChart"></div>
+  </div>
+  <br>
+  <table id="rawdata"
+    class="table"
+    cellspacing="0"></table>
+  <button id="prev">
+    < </button>
+      <button id="next">
+        >
+      </button>
+      <select id="limit">
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="300">300</option>
+      </select>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.js"></script>
+      <script>
+      $(document).ready(function() {
+        function getData(url) {
+          return new Promise((resolve, reject) => {
+            $.ajax({
+              method: 'GET',
+              url,
+              success: resolve,
+              error: reject
             })
-            </script>
+          })
+        }
+
+        let tbody = $('<tbody/>');
+        let thead = $('<thead/>');
+        thead.append($('<tr/>').html(`<th>Date</th><th>High</th><th>Low</th><th>Open</th><th>Close</th><th>Volume</th><th>Quote volume</th><th>Weighted average</th>`));
+        $('table#rawdata').append(thead).append(tbody);
+
+        function generateTable(data) {
+          let tbody = $('tbody', $('table#rawdata'))
+          tbody.html('')
+          data.forEach((item) => {
+            let row = $('<tr/>').html(`<td>${item.date}</td><td>${item.high}</td><td>${item.low}</td><td>${item.open}</td><td>${item.close}</td><td>${item.volume}</td><td>${item.quoteVolume}</td><td>${item.weightedAverage}</td>`);
+            tbody.append(row)
+          });
+        }
+
+        function getTableData(paramString) {
+          if (!paramString) paramString = ''
+          getData('http://localhost:8888/raw-data' + paramString)
+            .then((res) => {
+              generateTable(res)
+            })
+            .catch(err => { console.error(err) })
+        }
+        let params = {
+          offset: 0,
+          limit: 15
+        };
+
+        function next() {
+          params.offset = params.offset + 15;
+          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
+        }
+
+        function prev() {
+          params.offset = params.offset > 15 ? params.offset - 15 : 0;
+          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
+        }
+        $('#limit').change((ev) => {
+          params.limit = +ev.target.value;
+          params.offset = 0
+          getTableData(`?offset=0&limit=${params.limit}`)
+        })
+        $('#prev').click(prev)
+        $('#next').click(next)
+        getData('http://localhost:8888/bbands')
+          .then((res) => {
+            createChart(res);
+            return getTableData()
+          })
+          .catch(err => { console.error(err) })
+
+        // Chart.defaults.global.elements.point.radius = 0
+        function sortDates(a, b) {
+          return new Date(a) - new Date(b)
+        }
+        let hasBuy = false
+
+        function createChart(data) {
+          let prices = JSON.parse(data.prices).reverse(),
+            lowerBand = JSON.parse(data.lowerBand),
+            middleBand = JSON.parse(data.middleBand),
+            upperBand = JSON.parse(data.upperBand),
+            categories = JSON.parse(data.dates).sort(sortDates),
+            rsi = JSON.parse(data.rsi).map(el => el / 10000)
+
+          c3.generate({
+            bindto: '#statsChart',
+            size: {
+              width: 1200,
+              height: 600
+            },
+            padding: {
+              left: 40
+            },
+            color: {
+              pattern: [
+            '#666666',
+            '#36a2eb',
+            '#ff6384',
+            '#cc65fe',
+            '#0000bb'
+          ]
+            },
+            data: {
+              columns: [
+            [].concat(['Price'], prices),
+            [].concat(['LowerBand'], lowerBand),
+            [].concat(['MiddleBand'], middleBand),
+            [].concat(['UpperBand'], upperBand),
+            [].concat(['RSI'], rsi),
+          ],
+              type: 'line',
+            },
+            axis: {
+              x: {
+                type: 'category',
+                tick: {
+                  fit: false,
+                  rotate: 0,
+                  multiline: false,
+                  culling: {
+                    max: 6
+                  },
+                },
+                categories
+              }
+            },
+            point: {
+              // point radius if buy/sell - 4 else 0
+              r(d) {
+                if (d.id === 'Price') {
+                  if (prices[d.index] < lowerBand[d.index] && !hasBuy) {
+                    hasBuy = true;
+                    return 4;
+                  } else if (prices[d.index] > upperBand) {
+                    hasBuy = false;
+                    return 4
+                  }
+                }
+                return 0
+              },
+              color(d) {
+                // point color if buy/sell - colored else black
+                if (prices[d.index] < lowerBand[d.index] && !hasBuy) {
+
+                  return '#00dd00';
+                } else if (prices[d.index] > upperBand) {
+
+                  return '#dd0000'
+                }
+                return '#000'
+              }
+            },
+            grid: {
+              y: {
+                show: true
+              }
+            },
+            zoom: {
+              enabled: true
+            },
+            transition: { duration: 0 },
+
+          });
+        }
+      })
+
+      </script>
 </body>
 
 </html>
