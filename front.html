@@ -184,7 +184,7 @@
                   if (prices[d.index] < lowerBand[d.index] && !hasBuy) {
                     hasBuy = true;
                     return 4;
-                  } else if (prices[d.index] > upperBand) {
+                  } else if (prices[d.index] > upperBand[d.index]) {
                     hasBuy = false;
                     return 4
                   }
@@ -196,7 +196,7 @@
                 if (prices[d.index] < lowerBand[d.index] && !hasBuy) {
 
                   return '#00dd00';
-                } else if (prices[d.index] > upperBand) {
+                } else if (prices[d.index] > upperBand[d.index] && rsi[d.index] > 40) {
 
                   return '#dd0000'
                 }

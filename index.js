@@ -123,8 +123,8 @@ function calculate(buffer) {
 
         if (
           lastLowerBand && lastRsi && lastBuffer.close &&
-          (lastBuffer.close > lastUpperBand) &&
-          (lastRsi > RSI_THRESHOLD) &&
+          (lastBuffer.close > lastUpperBand ||
+            lastRsi < RSI_THRESHOLD) &&
           hasBuy
         ) {
           sell(lastBuffer)
