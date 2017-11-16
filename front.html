@@ -157,13 +157,13 @@
             lowerBand = JSON.parse(calculatedStats.lowerBand),
             middleBand = JSON.parse(calculatedStats.middleBand),
             upperBand = JSON.parse(calculatedStats.upperBand),
-            categories = JSON.parse(calculatedStats.dates).sort(sortDates),
+            dates = JSON.parse(calculatedStats.dates).sort(sortDates),
             rsi = JSON.parse(calculatedStats.rsi).map(el => el / 1e4)
 
 
           Plotly.newPlot('statsChart', [
             {
-              x: categories,
+              x: dates,
               y: lowerBand,
               mode: 'lines',
               name: 'Lower Band',
@@ -172,7 +172,7 @@
                 color: '#36a2eb',
               }
                 }, {
-              x: categories,
+              x: dates,
               y: middleBand,
               mode: 'lines',
               name: 'Middle Band',
@@ -181,7 +181,7 @@
                 color: '#dddddd',
               }
                 }, {
-              x: categories,
+              x: dates,
               y: upperBand,
               mode: 'lines',
               name: 'Upper Band',
@@ -190,7 +190,7 @@
                 color: '#cc65fe',
               }
                 }, {
-              x: categories,
+              x: dates,
               y: prices,
               mode: 'lines',
               name: 'Price',
@@ -199,13 +199,28 @@
                 color: '#666666',
               },
                 }, {
-              x: categories,
+              x: dates,
               y: rsi,
               mode: 'lines',
-              name: 'RSI',
+              name: 'RSI x 0.0001',
               line: {
                 width: 1,
                 color: '#0000dd',
+              }
+          }, {
+              x: transactions.reduce((sum, el) => {
+                if (el.type === 'sell') sum.push(el.date)
+                return sum
+              }, []),
+              y: transactions.reduce((sum, el) => {
+                if (el.type === 'sell') sum.push(el.price)
+                return sum
+              }, []),
+              mode: 'markers',
+              name: 'Sell Transactions',
+              marker: {
+                size: 8,
+                color: '#b00',
               }
           }, {
               x: transactions.reduce((sum, el) => {
@@ -224,20 +239,21 @@
               }
           }, {
               x: transactions.reduce((sum, el) => {
-                if (el.type === 'sell') sum.push(el.date)
+                if (el.profit > 0) sum.push(el.date)
                 return sum
               }, []),
+
               y: transactions.reduce((sum, el) => {
-                if (el.type === 'sell') sum.push(el.price)
+                if (el.profit > 0) sum.push(el.profit * 10)
                 return sum
               }, []),
               mode: 'markers',
-              name: 'Sell Transactions',
-              marker: {
-                size: 8,
-                color: '#b00',
+              name: 'Profit above zero x 10',
+              line: {
+                width: 1,
+                color: '#f00',
               }
-          }
+          },
             ]);
         }
       })

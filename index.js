@@ -89,7 +89,7 @@ function buyOrSell(lastBuffer, isBuy) {
     console.log('Overall profit: ', profit);
     hasBuy = true
   } else {
-    let diff = lastBuffer.close * config.invest_quantity - buyPrice;
+    let diff = lastBuffer.close * config.invest_quantity - (buyPrice || 0);
     profit = diff;
     console.log('SELL');
     console.log('Profit from current: ', diff);
@@ -125,18 +125,19 @@ async function calculate(buffer) {
       lastLowerBand &&
       lastRsi &&
       lastBuffer.close &&
-      (lastBuffer.close > lastUpperBand ||
+      (lastBuffer.close > (lastUpperBand - config.upperBand_threshold) ||
         lastRsi < config.rsi_threshold) &&
       hasBuy
     ) {
-      buyOrSell(lastBuffer, true)
+      buyOrSell(lastBuffer, false)
     } else if (
       lastUpperBand &&
       lastRsi &&
       lastBuffer.close &&
-      lastBuffer.close < lastLowerBand && !hasBuy
+      lastBuffer.close < (lastLowerBand + config.lowerBand_threshold) &&
+      !hasBuy
     ) {
-      buyOrSell(lastBuffer, false)
+      buyOrSell(lastBuffer, true)
     }
   } else if (buffer.length === 1 && hasBuy) {
     buyOrSell(lastBuffer, false)

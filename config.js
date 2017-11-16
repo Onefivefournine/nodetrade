@@ -6,8 +6,8 @@ module.exports = {
   end_date: 9999999999,
   period: 900, // 300, 900, 1800, 7200, 14400, or 86400
   rsi_threshold: 40,
-  lowerBand_threshold: 0,
-  upperBand_threshold: 0,
+  lowerBand_threshold: 0.00005,
+  upperBand_threshold: 0.00005,
   db: {
     name: 'testdb',
     host: 'localhost',
