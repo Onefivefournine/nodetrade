@@ -29,8 +29,6 @@
   }
 
   </style>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.css">
 </head>
 
 <body>
@@ -56,9 +54,11 @@
       <script src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
-      <script src="./custom-d3.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.js"></script>
+      <script type="text/javascript"
+        src="https://cdn.plot.ly/plotly-latest.min.js"></script>
       <script>
+      const RSI_THRESHOLD = 30;
+
       $(document).ready(function() {
         function getData(url) {
           return new Promise((resolve, reject) => {
@@ -78,9 +78,25 @@
 
         function generateTable(data) {
           let tbody = $('tbody', $('table#rawdata'))
-          tbody.html('')
-          data.forEach((item) => {
-            let row = $('<tr/>').html(`<td>${item.date}</td><td>${item.high}</td><td>${item.low}</td><td>${item.open}</td><td>${item.close}</td><td>${item.volume}</td><td>${item.quoteVolume}</td><td>${item.weightedAverage}</td>`);
+          tbody.html('');
+
+          data.forEach((item, i) => {
+            let color = "#222";
+
+            let found = transactions.find((el) => {
+              return Date.parse(el.date) === Date.parse(item.date)
+            });
+
+            if (found && found.type === 'buy') {
+              color = '#00dd00';
+            } else if (found && found.type === 'sell') {
+              color = '#dd0000'
+            }
+
+            let row = $('<tr/>', { style: 'color: ' + color }).html(
+              `<td>${item.date}</td><td>${item.high}</td><td>${item.low}</td><td>${item.open}</td><td>${item.close}</td><td>${item.volume}</td><td>${item.quoteVolume}</td><td>${item.weightedAverage}</td>`
+            );
+
             tbody.append(row)
           });
         }
@@ -93,106 +109,136 @@
             })
             .catch(err => { console.error(err) })
         }
+
+
+        // pagination
         let params = {
           offset: 0,
           limit: 15
         };
 
-        function next() {
-          params.offset = params.offset + 15;
-          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
-        }
-
-        function prev() {
-          params.offset = params.offset > 15 ? params.offset - 15 : 0;
-          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
-        }
         $('#limit').change((ev) => {
           params.limit = +ev.target.value;
           params.offset = 0
           getTableData(`?offset=0&limit=${params.limit}`)
-        })
-        $('#prev').click(prev)
-        $('#next').click(next)
+        });
+
+        $('#prev').click(function prev() {
+          params.offset = params.offset > params.limit ? params.offset - params.limit : 0;
+          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
+        });
+
+        $('#next').click(function next() {
+          params.offset = params.offset + params.limit;
+          getTableData(`?offset=${params.offset}&limit=${params.limit}`)
+        });
+
+        let calculatedStats, transactions;
         getData('http://localhost:8888/bbands')
-          .then((res) => {
-            createChart(res);
+          .then((bbands) => {
+            calculatedStats = bbands;
+            return getData('http://localhost:8888/transactions');
+          })
+          .then((transacts) => {
+            transactions = transacts;
+            createChart();
             return getTableData()
           })
           .catch(err => { console.error(err) })
 
-        // Chart.defaults.global.elements.point.radius = 0
         function sortDates(a, b) {
-          return new Date(a) - new Date(b)
+          return Date.parse(a) - Date.parse(b)
         }
-        let hasBuy = false
 
-        function createChart(data) {
-          let prices = JSON.parse(data.prices).reverse(),
-            lowerBand = JSON.parse(data.lowerBand),
-            middleBand = JSON.parse(data.middleBand),
-            upperBand = JSON.parse(data.upperBand),
-            categories = JSON.parse(data.dates).sort(sortDates),
-            rsi = JSON.parse(data.rsi).map(el => el / 10000)
+        let hasBuy = false;
 
-          c3.generate({
-            bindto: '#statsChart',
-            size: {
-              width: window.innerWidth - 40,
-              height: 600
-            },
-            padding: {
-              left: 40
-            },
-            color: {
-              pattern: [
-            '#666666',
-            '#36a2eb',
-            '#ff6384',
-            '#cc65fe',
-            '#0000bb'
-          ]
-            },
-            data: {
-              columns: [
-            [].concat(['Price'], prices),
-            [].concat(['LowerBand'], lowerBand),
-            [].concat(['MiddleBand'], middleBand),
-            [].concat(['UpperBand'], upperBand),
-            [].concat(['RSI'], rsi),
-          ],
-              type: 'line',
+        function createChart() {
+          let prices = JSON.parse(calculatedStats.prices),
+            lowerBand = JSON.parse(calculatedStats.lowerBand),
+            middleBand = JSON.parse(calculatedStats.middleBand),
+            upperBand = JSON.parse(calculatedStats.upperBand),
+            categories = JSON.parse(calculatedStats.dates).sort(sortDates),
+            rsi = JSON.parse(calculatedStats.rsi).map(el => el / 1e4)
 
-            },
-            axis: {
-              x: {
-                type: 'category',
-                tick: {
-                  fit: false,
-                  rotate: 0,
-                  multiline: false,
-                  culling: {
-                    max: 6
-                  },
-                },
-                categories
+
+          Plotly.newPlot('statsChart', [
+            {
+              x: categories,
+              y: lowerBand,
+              mode: 'lines',
+              name: 'Lower Band',
+              line: {
+                width: 1,
+                color: '#36a2eb',
               }
-            },
-            point: {
-              // point radius if buy/sell - 4 else 0
-              show: false
-            },
-            grid: {
-              y: {
-                show: true
+                }, {
+              x: categories,
+              y: middleBand,
+              mode: 'lines',
+              name: 'Middle Band',
+              line: {
+                width: 1,
+                color: '#dddddd',
               }
-            },
-            zoom: {
-              enabled: true
-            },
-            transition: { duration: 0 },
-
-          });
+                }, {
+              x: categories,
+              y: upperBand,
+              mode: 'lines',
+              name: 'Upper Band',
+              line: {
+                width: 1,
+                color: '#cc65fe',
+              }
+                }, {
+              x: categories,
+              y: prices,
+              mode: 'lines',
+              name: 'Price',
+              line: {
+                width: 1,
+                color: '#666666',
+              },
+                }, {
+              x: categories,
+              y: rsi,
+              mode: 'lines',
+              name: 'RSI',
+              line: {
+                width: 1,
+                color: '#0000dd',
+              }
+          }, {
+              x: transactions.reduce((sum, el) => {
+                if (el.type === 'buy') sum.push(el.date)
+                return sum
+              }, []),
+              y: transactions.reduce((sum, el) => {
+                if (el.type === 'buy') sum.push(el.price)
+                return sum
+              }, []),
+              mode: 'markers',
+              name: 'Buy Transactions',
+              marker: {
+                size: 8,
+                color: '#0b0',
+              }
+          }, {
+              x: transactions.reduce((sum, el) => {
+                if (el.type === 'sell') sum.push(el.date)
+                return sum
+              }, []),
+              y: transactions.reduce((sum, el) => {
+                if (el.type === 'sell') sum.push(el.price)
+                return sum
+              }, []),
+              mode: 'markers',
+              name: 'Sell Transactions',
+              marker: {
+                size: 8,
+                color: '#b00',
+              }
+          }
+            ]);
         }
       })
 
