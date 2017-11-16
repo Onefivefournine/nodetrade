@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const axios = require('axios');
 const talib = require('talib');
 const moment = require('moment');
-
+const config = require('./config.json');
 const CURRENCY_PAIR = 'BTC_XMR';
 const INVEST_QUANTITY = 0.1; //0.01;
 
@@ -12,13 +12,24 @@ const PERIOD = 900; // 300, 900, 1800, 7200, 14400, or 86400
 const RSI_THRESHOLD = 40;
 
 const DATA_URL = `https://poloniex.com/public?command=returnChartData&currencyPair=${CURRENCY_PAIR}&start=${START}&end=${END}&period=${PERIOD}`;
-
 const DB_URL = 'mysql://root:123@localhost:3306/testdb';
 
 const sequelizeInstance = new Sequelize(DB_URL, { logging: false });
-const chartData = require('./models/chartData.model')(sequelizeInstance);
-const transaction = require('./models/transaction.model')(sequelizeInstance);
-const bbands = require('./models/bbands.model')(sequelizeInstance);
+const chartDataModel = require('./models/chartData.model')(sequelizeInstance);
+const transactionModel = require('./models/transaction.model')(sequelizeInstance);
+const bbandsModel = require('./models/bbands.model')(sequelizeInstance);
+
+function storeBBands(rawData, bbands, rsi) {
+  const s = JSON.stringify;
+  return bbandsModel.create({
+    dates: s(rawData.map(el => el.date)),
+    prices: s(rawData.map(el => el.close)),
+    lowerBand: s(bbands.result.outRealLowerBand),
+    middleBand: s(bbands.result.outRealMiddleBand),
+    upperBand: s(bbands.result.outRealUpperBand),
+    rsi: s(rsi.outReal)
+  })
+}
 
 function getBBands(data, total) {
   return new Promise((resolve, reject) => {
@@ -31,20 +42,14 @@ function getBBands(data, total) {
       optInNbDevUp: 2,
       optInNbDevDn: 2,
       optInMAType: 0
-    }, function(err, calculations) {
+    }, function(err, bbandsData) {
       if (err) reject(err);
       if (total) {
         getRsi(data)
-          .then((rsi) => bbands.create({
-            dates: JSON.stringify(rawData.map(el => el.date)),
-            prices: JSON.stringify(rawData.map(el => el.close)),
-            lowerBand: JSON.stringify(calculations.result.outRealLowerBand),
-            middleBand: JSON.stringify(calculations.result.outRealMiddleBand),
-            upperBand: JSON.stringify(calculations.result.outRealUpperBand),
-            rsi: JSON.stringify(rsi.outReal)
-          }))
+          .then(rsi => storeBBands(data, rsi, bbandsData))
+          .catch(err => { console.error(err) })
       }
-      resolve(calculations.result);
+      resolve(bbandsData.result);
     })
   })
 }
@@ -57,9 +62,9 @@ function getRsi(data) {
       endIdx: data.length - 1,
       inReal: data.map(el => el.close),
       optInTimePeriod: 14,
-    }, function(err, calculations) {
+    }, function(err, rsiData) {
       if (err) reject(err);
-      resolve(calculations.result)
+      resolve(rsiData.result)
     })
   })
 }
@@ -104,7 +109,7 @@ function sell(lastBuffer) {
   hasBuy = false
 }
 
-function calculate(buffer) {
+async function calculate(buffer) {
   if (buffer.length > 1) {
     let lowerBand, upperBand;
     return getBBands(buffer)
