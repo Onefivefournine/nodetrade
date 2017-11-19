@@ -8,7 +8,7 @@ const DB_URL = `mysql://${config.db.user}${config.db.password?':'+config.db.pass
 
 const sequelizeInstance = new Sequelize(DB_URL);
 const chartData = require('./models/chartData.model')(sequelizeInstance);
-const bbands = require('./models/bbands.model')(sequelizeInstance);
+const talibData = require('./models/talibData.model')(sequelizeInstance);
 const transaction = require('./models/transaction.model')(sequelizeInstance);
 
 const app = express();
@@ -20,36 +20,38 @@ const APP_PORT = 8888;
 Promise.all([
         chartData.sync(),
         transaction.sync(),
-        bbands.sync()
+        talibData.sync()
     ])
-  .then(() => {
-    app.listen(APP_PORT, () => {
-      console.log('Api is listening on http://localhost:' + APP_PORT);
-    });
+    .then(() => {
+        app.listen(APP_PORT, () => {
+            console.log('Api is listening on http://localhost:' + APP_PORT);
+        });
 
-    app.get('/raw-data', (req, res) => {
-      chartData.findAll({ limit: +req.query.limit || 15, offset: +req.query.offset || 0, order: ['date'] })
-        .then((result) => {
-          res.send(result)
-        })
-        .catch(err => { console.error(err) })
-    });
+        app.use('/front', express.static('./front.html'))
 
-    app.get('/bbands', (req, res) => {
-      bbands.findAll({ limit: 1 })
-        .then((result) => {
-          res.send(result[0])
-        })
-        .catch(err => { console.error(err) })
-    });
+        app.get('/raw-data', (req, res) => {
+            chartData.findAll({ limit: +req.query.limit || 15, offset: +req.query.offset || 0, order: ['date'] })
+                .then((result) => {
+                    res.send(result)
+                })
+                .catch(err => { console.error(err) })
+        });
 
-    app.get('/transactions', (req, res) => {
-      transaction.findAll()
-        .then((result) => {
-          res.send(result)
-        })
-        .catch(err => { console.error(err) })
-    });
+        app.get('/talibData', (req, res) => {
+            talibData.findAll()
+                .then((result) => {
+                    res.send(result)
+                })
+                .catch(err => { console.error(err) })
+        });
 
-  })
-  .catch(err => { console.error(err) })
+        app.get('/transactions', (req, res) => {
+            transaction.findAll()
+                .then((result) => {
+                    res.send(result)
+                })
+                .catch(err => { console.error(err) })
+        });
+
+    })
+    .catch(err => { console.error(err) })

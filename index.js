@@ -18,7 +18,7 @@ function to(promise) {
         .then(data => [null, data])
         .catch(err => {
             console.error(err);
-            return [err]
+            return [err];
         });
 }
 
@@ -26,9 +26,9 @@ function executeTalib(params, cb) {
     return new Promise((resolve, reject) => {
         Talib.execute(params, (params.name === 'BBANDS') ? cb(resolve, reject) : function(err, data) {
             if (err) reject(err);
-            resolve(data.result)
-        })
-    })
+            resolve(data.result);
+        });
+    });
 }
 
 function getBBands(data, total) {
@@ -44,20 +44,20 @@ function getBBands(data, total) {
     }, (resolve, reject) => async function(err, bbandsData) {
         if (err) reject(err);
         if (total) {
-            const s = JSON.stringify;
+            // const s = JSON.stringify;
 
-            let [errRsi, rsi] = await to(getRsi(data));
-            let [errStoreRsi] = await to(talibData.create({ data: s(rsi.outReal), type: 'RSI' }));
+            let [, rsi] = await to(getRsi(data));
+            await to(talibData.create({ data: rsi.outReal, type: 'RSI' }));
 
-            let dataToStore = s({
+            let dataToStore = {
                 dates: rawData.map(el => el.date),
                 prices: rawData.map(el => el.close),
                 lowerBand: bbandsData.outRealLowerBand,
                 middleBand: bbandsData.outRealMiddleBand,
                 upperBand: bbandsData.outRealUpperBand,
-            });
+            };
 
-            let [errBbands, result] = await to(talibData.create({ data: dataToStore, type: 'BBANDS' }));
+            let [, result] = await to(talibData.create({ data: dataToStore, type: 'BBANDS' }));
         }
         resolve(bbandsData.result);
     });
@@ -86,14 +86,14 @@ function buyOrSell(lastBuffer, isBuy) {
         console.log('BUY');
         console.log('buyPrice: ', buyPrice);
         console.log('Overall profit: ', profit);
-        hasBuy = true
+        hasBuy = true;
     } else {
         let diff = lastBuffer.close * config.invest_quantity - (buyPrice || 0);
         profit = diff;
         console.log('SELL');
         console.log('Profit from current: ', diff);
         console.log('Overall profit: ', profit);
-        hasBuy = false
+        hasBuy = false;
     }
 
     transactions.push({
@@ -108,8 +108,8 @@ function buyOrSell(lastBuffer, isBuy) {
 
 async function calculate(buffer) {
     if (buffer.length > 1) {
-        let [errBbands, bbands] = await to(getBBands(buffer));
-        let [errRsi, rsi] = await to(getRsi(buffer));
+        let [, bbands] = await to(getBBands(buffer));
+        let [, rsi] = await to(getRsi(buffer));
 
         const getLast = arr => arr[arr.length - 1];
 
@@ -128,7 +128,7 @@ async function calculate(buffer) {
                 lastRsi < config.rsi_threshold) &&
             hasBuy
         ) {
-            buyOrSell(lastBuffer, false)
+            buyOrSell(lastBuffer, false);
         } else if (
             lastUpperBand &&
             lastRsi &&
@@ -136,12 +136,12 @@ async function calculate(buffer) {
             lastBuffer.close < (lastLowerBand + config.lowerBand_threshold) &&
             !hasBuy
         ) {
-            buyOrSell(lastBuffer, true)
+            buyOrSell(lastBuffer, true);
         }
     } else if (buffer.length === 1 && hasBuy) {
-        buyOrSell(lastBuffer, false)
+        buyOrSell(buffer[0], false);
     } else if (!buffer.length) {
-        return Promise.reject('NO BUFFER LENGTH')
+        return Promise.reject('NO BUFFER LENGTH');
     }
 }
 
@@ -150,7 +150,7 @@ function calculateTransactions(data) {
         return sum.then(async function() {
             await to(calculate(data));
             data.pop();
-        })
+        });
     }, Promise.resolve());
 }
 
@@ -164,13 +164,13 @@ function syncDB() {
 
 async function start() {
     await to(syncDB());
-    let [err, { data: preRawData }] = await to(axios.get(DATA_URL));
+    let [, { data: preRawData }] = await to(axios.get(DATA_URL));
     rawData = preRawData.map((el) => {
         el.date = moment.unix(el.date);
         el.period = config.period;
         el.coinPair = config.currency_pair;
-        el.createdAt = Date.now()
-        return el
+        el.createdAt = Date.now();
+        return el;
     }).sort((a, b) => {
         return Date.parse(a.date) - Date.parse(b.date);
     });
@@ -182,7 +182,7 @@ async function start() {
     await to(transactionModel.bulkCreate(transactions));
 
     console.log('End profit is: ' + profit);
-    sequelizeInstance.close()
+    sequelizeInstance.close();
 }
 
 start();
