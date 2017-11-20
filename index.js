@@ -52,9 +52,9 @@ function getBBands(data, total) {
             let dataToStore = {
                 dates: rawData.map(el => el.date),
                 prices: rawData.map(el => el.close),
-                lowerBand: bbandsData.outRealLowerBand,
-                middleBand: bbandsData.outRealMiddleBand,
-                upperBand: bbandsData.outRealUpperBand,
+                lowerBand: bbandsData.result.outRealLowerBand,
+                middleBand: bbandsData.result.outRealMiddleBand,
+                upperBand: bbandsData.result.outRealUpperBand,
             };
 
             let [, result] = await to(talibData.create({ data: dataToStore, type: 'BBANDS' }));

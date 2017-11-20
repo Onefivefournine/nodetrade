@@ -152,7 +152,7 @@
                 let hasBuy = false;
 
                 function getTalibStats(type) {
-                    return JSON.parse(calculatedStats.find(el => el.type === type).data)
+                    return calculatedStats.find(el => el.type === type).data
                 }
 
                 function createChart() {
