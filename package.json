@@ -21,6 +21,7 @@
     "express": "^4.16.2",
     "moment": "^2.19.1",
     "mysql2": "^1.4.2",
+    "python-shell": "^0.4.0",
     "sequelize": "^4.22.5",
     "talib": "^1.0.3"
   }
