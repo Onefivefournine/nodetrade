@@ -1,0 +1,45 @@
+<div class="container-fluid my-4">
+    <h2>Markets Data</h2>
+    <p class="text-muted">Last refresh {{lastRefresh}}</p>
+    <h5>Total average profit: {{totalAvgProfit}}%</h5>
+    <h5>Coins owned {{marketsData.filter(el=>el.hasBuy).length}}, summary price {{summaryPrice}} </h5>
+    <p>Refresh interval - {{settings.marketsRefreshInterval/1000}}s | Rises in a row to buy: {{settings.risesInRowToBuy}}
+        <br> Sell threshold limits: from {{settings.minSellThreshold}}% to {{settings.maxSellThreshold}}% | Rise/Fall thresholds: <span class="text-danger">< {{settings.minFallToBeNegative}}%</span> or <span class="text-success">> {{settings.minRiseToBePositive}}%</span>
+    </p>
+    <br>
+    <h3 v-show="loading"
+        class="text-center">Loading, please wait...</h3>
+    <table class="table table-hover marketsData"
+        v-show="!loading">
+        <thead>
+            <tr>
+                <th @click="sortBy('date')">Currency / Date {{triangle('date')}}</th>
+                <th @click="sortBy('rises_falls')">
+                    <span v-show="sortedBy==='rises_falls' && dir">▴</span> <span class="text-success">&uarr;</span> / <span class="text-danger">&darr;</span> <span v-show="sortedBy==='rises_falls' && !dir">▾</span>
+                    <br><small>in a row</small>
+                </th>
+                <th @click="sortBy('price')">Price {{triangle('price')}}</th>
+                <th @click="sortBy('diff')">Diff {{triangle('diff')}}</th>
+                <th style="cursor:default;">Min rise / fall</th>
+                <th @click="sortBy('sellThreshold')">Sell threshold {{triangle('sellThreshold')}}</th>
+                <th @click="sortBy('profit')">Profit {{triangle('profit')}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="md in marketsData"
+                :class="md.up!==undefined && md.up!=='equals' ? md.up ?'text-success':'text-danger':''">
+                <td>{{md.currency}}
+                    <br>{{md.timestamp | parseDate}} </td>
+                <td>{{md.hasBuy? '&#10004;':'&times;'}} {{md.risesInRow||0}} / {{md.fallsInRow||0}}</td>
+                <td>{{md.price}}</td>
+                <td>{{md.diff||'-' | fixDiff(md) }}</td>
+                <td>
+                    {{minRise(md)}}
+                    <br>{{minFall(md)}}
+                </td>
+                <td>{{md.sellThreshold ? md.sellThreshold.toFixed(8) + '%' : '-'}}</td>
+                <td>{{md.profit ? md.profit.toFixed(8) + '%' : '-'}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

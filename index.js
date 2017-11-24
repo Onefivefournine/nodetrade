@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const axios = require('axios');
-const Talib = require('talib');
 const moment = require('moment');
 const config = require('./config');
 

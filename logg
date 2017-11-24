@@ -1,0 +1,712 @@
+[
+{
+  "buyPrice": 0.04869398,
+  "profit": -0.04869398,
+  "price": 0.04869398,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511511300,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04869398,
+  "profit": -0.00041504,
+  "price": 0.04827894,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511510400,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.049342,
+  "profit": -0.04975704,
+  "price": 0.049342,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511509500,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.049342,
+  "profit": 0.00138314,
+  "price": 0.05114018,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511502300,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04430115,
+  "profit": -0.04291801,
+  "price": 0.04430115,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511364600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04430115,
+  "profit": 0.00141822,
+  "price": 0.04433623,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511363700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04425497,
+  "profit": -0.04283675,
+  "price": 0.04425497,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511361000,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04425497,
+  "profit": 0.001691,
+  "price": 0.04452775,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511357400,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04419998,
+  "profit": -0.04250898,
+  "price": 0.04419998,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511346600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04419998,
+  "profit": 0.00221702,
+  "price": 0.044726,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511325000,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04426002,
+  "profit": -0.042043,
+  "price": 0.04426002,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511318700,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04426002,
+  "profit": 0.00286869,
+  "price": 0.04491169,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511295300,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04409593,
+  "profit": -0.04122724,
+  "price": 0.04409593,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511281800,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04409593,
+  "profit": 0.00363677,
+  "price": 0.04486401,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511264700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04377984,
+  "profit": -0.04014307,
+  "price": 0.04377984,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511182800,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04377984,
+  "profit": 0.00535693,
+  "price": 0.0455,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511149500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.0434529,
+  "profit": -0.03809597,
+  "price": 0.0434529,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511115300,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.0434529,
+  "profit": 0.00925319,
+  "price": 0.04734916,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511075700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04315266,
+  "profit": -0.03389947,
+  "price": 0.04315266,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511028000,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04315266,
+  "profit": 0.0097242,
+  "price": 0.04362367,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1511012700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04271199,
+  "profit": -0.03298779,
+  "price": 0.04271199,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510981200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04271199,
+  "profit": 0.01070572,
+  "price": 0.04369351,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510969500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04191223,
+  "profit": -0.03120651,
+  "price": 0.04191223,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510857900,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04191223,
+  "profit": 0.0108537,
+  "price": 0.04206021,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510856100,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04298935,
+  "profit": -0.03213565,
+  "price": 0.04298935,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510855200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04298935,
+  "profit": 0.01265935,
+  "price": 0.044795,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510850700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.0432419,
+  "profit": -0.03058255,
+  "price": 0.0432419,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510822800,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.0432419,
+  "profit": 0.01304981,
+  "price": 0.04363236,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510821900,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04378076,
+  "profit": -0.03073095,
+  "price": 0.04378076,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510821000,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04378076,
+  "profit": 0.01303877,
+  "price": 0.04376972,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510820100,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.0438,
+  "profit": -0.03076123,
+  "price": 0.0438,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510819200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.0438,
+  "profit": 0.01334606,
+  "price": 0.04410729,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510818300,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.044364,
+  "profit": -0.03101794,
+  "price": 0.044364,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510817400,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.044364,
+  "profit": 0.01529206,
+  "price": 0.04631,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510795800,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04647006,
+  "profit": -0.031178,
+  "price": 0.04647006,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510749900,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04647006,
+  "profit": 0.015612,
+  "price": 0.04679,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510749000,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.047183,
+  "profit": -0.031571,
+  "price": 0.047183,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510748100,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.047183,
+  "profit": 0.01529797,
+  "price": 0.04686897,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510747200,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04764953,
+  "profit": -0.03235156,
+  "price": 0.04764953,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510746300,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04764953,
+  "profit": 0.01583345,
+  "price": 0.04818501,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510713000,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.048468,
+  "profit": -0.03263455,
+  "price": 0.048468,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510712100,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.048468,
+  "profit": 0.01839042,
+  "price": 0.05102497,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510697700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.050005,
+  "profit": -0.03161458,
+  "price": 0.050005,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510682400,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.050005,
+  "profit": 0.01988542,
+  "price": 0.0515,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510648200,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04740388,
+  "profit": -0.02751846,
+  "price": 0.04740388,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510622100,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04740388,
+  "profit": 0.0220575,
+  "price": 0.04957596,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510597800,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04657545,
+  "profit": -0.02451795,
+  "price": 0.04657545,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510578900,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04657545,
+  "profit": 0.02922297,
+  "price": 0.05374092,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510526700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04790363,
+  "profit": -0.01868066,
+  "price": 0.04790363,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510474500,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04790363,
+  "profit": 0.03631927,
+  "price": 0.05499993,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510469100,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04434,
+  "profit": -0.00802073,
+  "price": 0.04434,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510365600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04434,
+  "profit": 0.03778625,
+  "price": 0.04580698,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510346700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04420001,
+  "profit": -0.00641376,
+  "price": 0.04420001,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510329600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04420001,
+  "profit": 0.0401298,
+  "price": 0.04654356,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510312500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04385,
+  "profit": -0.0037202,
+  "price": 0.04385,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510275600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04385,
+  "profit": 0.0422808,
+  "price": 0.046001,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510240500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03880247,
+  "profit": 0.00347833,
+  "price": 0.03880247,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510162200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03880247,
+  "profit": 0.0420084,
+  "price": 0.03853007,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510161300,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03968996,
+  "profit": 0.00231844,
+  "price": 0.03968996,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510160400,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03968996,
+  "profit": 0.04225947,
+  "price": 0.03994103,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510159500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.0400264,
+  "profit": 0.00223307,
+  "price": 0.0400264,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510158600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.0400264,
+  "profit": 0.04241713,
+  "price": 0.04018406,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510157700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03993,
+  "profit": 0.00248713,
+  "price": 0.03993,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510144200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03993,
+  "profit": 0.04310623,
+  "price": 0.0406191,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510137000,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03993406,
+  "profit": 0.00317217,
+  "price": 0.03993406,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510121700,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03993406,
+  "profit": 0.04331741,
+  "price": 0.04014524,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510105500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04040999,
+  "profit": 0.00290742,
+  "price": 0.04040999,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510104600,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04040999,
+  "profit": 0.04444742,
+  "price": 0.04154,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510090200,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04083605,
+  "profit": 0.00361137,
+  "price": 0.04083605,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510083900,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04083605,
+  "profit": 0.04573636,
+  "price": 0.04212499,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510055100,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.04100763,
+  "profit": 0.00472873,
+  "price": 0.04100763,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1510029900,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.04100763,
+  "profit": 0.04793873,
+  "price": 0.04321,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509995700,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03895079,
+  "profit": 0.00898794,
+  "price": 0.03895079,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509911100,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03895079,
+  "profit": 0.05001198,
+  "price": 0.04102404,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509841800,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.03990097,
+  "profit": 0.01011101,
+  "price": 0.03990097,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509829200,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.03990097,
+  "profit": 0.05265955,
+  "price": 0.04254854,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509791400,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.041215,
+  "profit": 0.01144455,
+  "price": 0.041215,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509761700,
+  "type": "buy"
+},
+{
+  "buyPrice": 0.041215,
+  "profit": 0.05452854,
+  "price": 0.04308399,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509745500,
+  "type": "sell"
+},
+{
+  "buyPrice": 0.041215,
+  "profit": 0.09536249,
+  "price": 0.04083395,
+  "investQuantity": 1,
+  "currency": "BTC_ETH",
+  "date": 1509726600,
+  "type": "sell"
+}]

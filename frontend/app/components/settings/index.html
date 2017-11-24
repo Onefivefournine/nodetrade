@@ -1,0 +1,164 @@
+<div class="container my-4">
+    <h2>Settings</h2>
+    <br>
+    <form @submit.prevent="setSettings">
+        <div class="form-group">
+            <label class="col-form-label">Bittrex API key</label>
+            <input :disabled="sending"
+                type="text"
+                v-model="settings.bittrexApiKey"
+                class="form-control"
+                placeholder="Bittrex API key">
+            <small class="form-text text-muted">Required only for live trading</small>
+        </div>
+        <div class="form-group">
+            <label class="col-form-label">Bittrex API secret</label>
+            <input :disabled="sending"
+                type="text"
+                v-model="settings.bittrexApiSecret"
+                class="form-control"
+                placeholder="Bittrex API secret">
+            <small class="form-text text-muted">Required only for live trading</small>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Log level</label>
+                    <select v-model="settings.logLevel"
+                        :disabled="sending"
+                        class="form-control">
+                        <option value=""
+                            hidden>Select log level</option>
+                        <option value="0">0 - None</option>
+                        <option value="1">1 - Errors</option>
+                        <option value="2">2 - Verbose</option>
+                        <option value="3">3 - Debug</option>
+                    </select>
+                    <small class="form-text text-muted">Affects both frontend and backend logs</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Live trading</label>
+                    <br>
+                    <label class="form-check-label">
+                        <input class="form-check-input"
+                            type="checkbox"
+                            :disabled="sending || !settings.bittrexApiSecret || !settings.bittrexApiKey"
+                            @change="reqSave=!reqSave"
+                            v-model="settings.liveTrading"> <span :class="{'text-muted':!settings.bittrexApiSecret || !settings.bittrexApiKey}">Live trading is {{settings.liveTrading?'ON':'OFF'}}</span> <small class="text-muted"
+                            v-show="reqSave">(requires save)</small>
+                    </label>
+                    <small class="form-text text-danger"
+                        v-if="settings.bittrexApiSecret && settings.bittrexApiKey">CAUTION! It will try to use your balance if checked and saved!</small>
+                    <small class="form-text text-muted"
+                        v-else>Fill in Bittrex API Key and Bittrex API Secret</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Rises in a row to buy</label>
+                    <input type="number"
+                        min="1"
+                        step="1"
+                        :disabled="sending"
+                        v-model="settings.risesInRowToBuy"
+                        class="form-control"
+                        placeholder="Rises in a row to buy">
+                    <small class="form-text text-muted">Buy event will be triggered after this amount of rises in a row</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Markets data refresh interval</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="1"
+                            v-model="settings.marketsRefreshInterval"
+                            class="form-control"
+                            placeholder="Interval in ms">
+                        <span class="input-group-addon">ms</span>
+                    </div>
+                    <small class="form-text text-muted">Markets data will be refreshed every {{settings.marketsRefreshInterval/1000}} seconds</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Min rise to be positive</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="0.000000001"
+                            v-model="settings.minRiseToBePositive"
+                            class="form-control"
+                            placeholder="Min rise to be positive"> <span class="input-group-addon">%</span>
+                    </div>
+                    <small class="form-text text-muted">Minimum diff value that will be treated as rise</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Min fall to be negative</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="0.000000001"
+                            v-model="settings.minFallToBeNegative"
+                            class="form-control"
+                            placeholder="Min fall to be negative"> <span class="input-group-addon">%</span>
+                    </div>
+                    <small class="form-text text-muted">Minimum diff value that will be treated as fall, use absolute(positive) value</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Min sell threshold</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="0.000000001"
+                            v-model="settings.minSellThreshold"
+                            class="form-control"
+                            placeholder="Min sell threshold">
+                        <span class="input-group-addon">%</span>
+                    </div>
+                    <small class="form-text text-muted">Minimal fall to trigger sell will decrease after several weak falls, but not lower than that value. Also it's a starting threshold after buy</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Max sell threshold</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="0.000000001"
+                            v-model="settings.maxSellThreshold"
+                            class="form-control"
+                            placeholder="Max sell threshold"> <span class="input-group-addon">%</span>
+                    </div>
+                    <small class="form-text text-muted">Minimal fall to trigger sell will be increased after several strong rises, but not higher than that value</small>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-label">Sell threshold decrease step</label>
+                    <div class="input-group">
+                        <input :disabled="sending"
+                            type="number"
+                            step="0.000000001"
+                            v-model="settings.sellThresholdDecrease"
+                            class="form-control"
+                            placeholder="Sell threshold decrease"> <span class="input-group-addon">%</span>
+                    </div>
+                    <small class="form-text text-muted">If coin falls, but fall is weak, sell threshold will be decreased by that value</small>
+                </div>
+            </div>
+            <div class="col-12 text-center">
+                <button class="btn btn-success"
+                    type="submit"
+                    :disabled="sending">Save settings</button>
+            </div>
+        </div>
+    </form>
+</div>
