@@ -1,4 +1,10 @@
 #!/usr/bin/python
+
+'''
+Install talib for python first
+https://mrjbq7.github.io/ta-lib/install.html
+'''
+
 from poloniex import poloniex
 import talib
 import json
